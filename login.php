@@ -215,7 +215,7 @@ require_once __DIR__ . '/includes/header.php';
 
         <!-- Role Tabs -->
         <div class="role-tabs-bar" role="tablist">
-          <button type="button" class="role-tab-btn active" id="tab-retailer" onclick="selectRoleTab('retailer')">
+          <button type="button" class="role-tab-btn" id="tab-retailer" onclick="selectRoleTab('retailer')">
             <span style="font-size: 1.15rem; line-height: 1;">🏪</span>
             <span>Retail Pharmacy</span>
           </button>
@@ -233,6 +233,15 @@ require_once __DIR__ . '/includes/header.php';
           </button>
         </div>
 
+        <!-- Dynamic Role Context Box -->
+        <div id="role-hint-card" style="margin-bottom: 1.25rem; background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+          <div style="font-size: 0.775rem;">
+            <span style="color: var(--text-subtle);">Selected Workspace:</span>
+            <strong id="role-org-name" style="color: var(--color-primary-dark); margin-left: 0.25rem;">CareFirst Community Pharmacy</strong>
+          </div>
+          <span id="role-badge" class="badge badge-primary" style="font-size: 0.7rem;">Retailer &bull; POS</span>
+        </div>
+
         <!-- Credentials Form -->
         <form method="POST" action="login.php<?= !empty($redirect) ? '?redirect=' . urlencode($redirect) : '' ?>" id="loginForm">
           <?= csrf_field() ?>
@@ -241,7 +250,7 @@ require_once __DIR__ . '/includes/header.php';
             <label class="form-label" for="login-email" style="font-size: 0.8rem; font-weight: 600;">Registered Email Address</label>
             <div class="input-icon-group">
               <span class="input-icon-prefix"><?= icon('mail', 18) ?></span>
-              <input type="email" id="login-email" name="email" class="form-control" placeholder="retailer@pharmasys.com" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" autocomplete="email">
+              <input type="email" id="login-email" name="email" class="form-control" placeholder="retailer@pharmasys.com" required value="<?= htmlspecialchars($_POST['email'] ?? 'retailer@pharmasys.com') ?>" autocomplete="email">
             </div>
           </div>
 
@@ -249,7 +258,7 @@ require_once __DIR__ . '/includes/header.php';
             <label class="form-label" for="login-password" style="font-size: 0.8rem; font-weight: 600;">Security Password</label>
             <div class="input-icon-group">
               <span class="input-icon-prefix"><?= icon('lock', 18) ?></span>
-              <input type="password" id="login-password" name="password" class="form-control" placeholder="••••••••••••" required autocomplete="current-password">
+              <input type="password" id="login-password" name="password" class="form-control" placeholder="••••••••••••" value="password123" required autocomplete="current-password">
               <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" title="Toggle password visibility" id="pwdToggleBtn">
                 <?= icon('eye', 18) ?>
               </button>
@@ -274,25 +283,60 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <script>
-let currentRole = 'retailer';
-
-const rolePlaceholders = {
-  retailer: 'retailer@pharmasys.com',
-  consumer: 'consumer@pharmasys.com',
-  distributor: 'distributor@pharmasys.com',
-  manufacturer: 'manufacturer@pharmasys.com'
+const roleConfigs = {
+  retailer: {
+    email: 'retailer@pharmasys.com',
+    password: 'password123',
+    orgName: 'CareFirst Community Pharmacy',
+    badge: 'Retailer • Smart POS'
+  },
+  consumer: {
+    email: 'consumer@pharmasys.com',
+    password: 'password123',
+    orgName: 'Rahul Sharma (Patient)',
+    badge: 'Patient / Consumer'
+  },
+  distributor: {
+    email: 'distributor@pharmasys.com',
+    password: 'password123',
+    orgName: 'Nexus Healthcare Logistics Pvt. Ltd.',
+    badge: 'Wholesale Distributor'
+  },
+  manufacturer: {
+    email: 'manufacturer@pharmasys.com',
+    password: 'password123',
+    orgName: 'Apex LifeSciences Manufacturing Ltd.',
+    badge: 'Licensed Manufacturer'
+  }
 };
 
 function selectRoleTab(role) {
-  currentRole = role;
+  const cfg = roleConfigs[role];
+  if (!cfg) return;
+
+  // 1. Update active tab UI
   document.querySelectorAll('.role-tab-btn').forEach(btn => btn.classList.remove('active'));
   const activeBtn = document.getElementById('tab-' + role);
-  if (activeBtn) activeBtn.classList.add('active');
-
-  const emailInput = document.getElementById('login-email');
-  if (emailInput && !emailInput.value) {
-    emailInput.placeholder = rolePlaceholders[role] || 'name@pharmasys.com';
+  if (activeBtn) {
+    activeBtn.classList.add('active');
   }
+
+  // 2. Set credentials into inputs
+  const emailInput = document.getElementById('login-email');
+  const pwdInput = document.getElementById('login-password');
+  if (emailInput) {
+    emailInput.value = cfg.email;
+    emailInput.placeholder = cfg.email;
+  }
+  if (pwdInput) {
+    pwdInput.value = cfg.password;
+  }
+
+  // 3. Update summary badge
+  const orgNameEl = document.getElementById('role-org-name');
+  const badgeEl = document.getElementById('role-badge');
+  if (orgNameEl) orgNameEl.textContent = cfg.orgName;
+  if (badgeEl) badgeEl.textContent = cfg.badge;
 }
 
 function togglePasswordVisibility() {
@@ -306,6 +350,21 @@ function togglePasswordVisibility() {
     btn.innerHTML = `<?= icon('eye', 18) ?>`;
   }
 }
+
+// Auto-initialize matching role tab on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const currentEmail = (document.getElementById('login-email').value || '').trim();
+  let initialRole = 'retailer';
+  if (currentEmail) {
+    for (const [r, c] of Object.entries(roleConfigs)) {
+      if (c.email.toLowerCase() === currentEmail.toLowerCase()) {
+        initialRole = r;
+        break;
+      }
+    }
+  }
+  selectRoleTab(initialRole);
+});
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
