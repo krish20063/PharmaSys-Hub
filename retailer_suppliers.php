@@ -100,7 +100,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="grid-4" style="margin-bottom: 1.5rem;">
     <div class="card" style="padding: 1rem 1.25rem;">
       <div style="font-size: 0.775rem; color: var(--text-subtle); font-weight: 600;">Active Suppliers</div>
-      <div style="font-size: 1.8rem; font-weight: 700; color: #0F172A; margin-top: 0.25rem;"><?= count($allSuppliers) ?></div>
+      <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;"><?= count($allSuppliers) ?></div>
       <div style="font-size: 0.72rem; color: var(--text-subtle);">Licensed B2B vendors</div>
     </div>
 
@@ -150,7 +150,7 @@ require_once __DIR__ . '/includes/header.php';
           <?php foreach ($allSuppliers as $s): ?>
             <tr class="sup-row" data-search="<?= strtolower(htmlspecialchars($s['name'] . ' ' . $s['license_no'] . ' ' . $s['gstin'] . ' ' . $s['address'])) ?>">
               <td>
-                <strong style="color: #0F172A;"><?= htmlspecialchars($s['name']) ?></strong>
+                <strong style="color: var(--text-main);"><?= htmlspecialchars($s['name']) ?></strong>
                 <div style="margin-top: 0.25rem;">
                   <span class="badge <?= $s['role'] === 'manufacturer' ? 'badge-primary' : 'badge-neutral' ?>">
                     <?= $s['role'] === 'manufacturer' ? icon('box', 11) . ' Manufacturer' : icon('truck', 11) . ' Distributor' ?>

@@ -190,7 +190,7 @@ require_once __DIR__ . '/includes/header.php';
   <!-- Page Header -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h2 style="font-size: 1.45rem; font-weight: 800; color: #0F172A; display: flex; align-items: center; gap: 0.5rem;">
+      <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
         <?= icon('cart', 22) ?> Bulk Procurement &amp; Manufacturer Purchasing
       </h2>
       <p style="font-size: 0.825rem; color: var(--text-subtle); margin-top: 0.25rem;">
@@ -252,7 +252,7 @@ require_once __DIR__ . '/includes/header.php';
           </div>
         </div>
 
-        <div style="background: #FFFFFF; border: 1px solid #BBF7D0; border-radius: 6px; padding: 0.85rem; font-size: 0.85rem;">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 6px; padding: 0.85rem; font-size: 0.85rem;">
           <div style="display: flex; justify-content: space-between;">
             <div>
               <strong><?= htmlspecialchars($newOrderReceipt['brand_name']) ?></strong> &bull; Batch: <code><?= htmlspecialchars($newOrderReceipt['batch_number']) ?></code>
@@ -394,7 +394,7 @@ require_once __DIR__ . '/includes/header.php';
                   </div>
                 </td>
                 <td>
-                  <div style="font-weight: 700; color: #0F172A; font-size: 0.85rem;"><?= htmlspecialchars($b['manufacturer_name']) ?></div>
+                  <div style="font-weight: 700; color: var(--text-main); font-size: 0.85rem;"><?= htmlspecialchars($b['manufacturer_name']) ?></div>
                   <div style="font-size: 0.72rem; color: var(--text-subtle); font-family: var(--font-mono);"><?= htmlspecialchars($b['mfr_license']) ?></div>
                   <div style="font-size: 0.7rem; color: var(--text-muted);"><?= htmlspecialchars($b['mfr_address']) ?></div>
                 </td>
@@ -410,7 +410,7 @@ require_once __DIR__ . '/includes/header.php';
                   </div>
                 </td>
                 <td>
-                  <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A;"><?= number_format($b['current_quantity']) ?></div>
+                  <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-main);"><?= number_format($b['current_quantity']) ?></div>
                   <span style="font-size: 0.7rem; color: var(--text-subtle);">Units Available</span>
                 </td>
                 <td>
@@ -512,7 +512,7 @@ require_once __DIR__ . '/includes/header.php';
                   <strong><?= number_format($po['quantity']) ?></strong> units
                 </td>
                 <td>
-                  <strong style="color: #0F172A;">₹<?= number_format($po['total_amount'], 2) ?></strong>
+                  <strong style="color: var(--text-main);">₹<?= number_format($po['total_amount'], 2) ?></strong>
                   <div style="font-size: 0.7rem; color: var(--text-subtle);">Base: ₹<?= number_format($po['taxable_amount'], 2) ?></div>
                 </td>
                 <td>
@@ -551,10 +551,10 @@ require_once __DIR__ . '/includes/header.php';
       <input type="hidden" name="batch_id" id="modal-batch-id" value="">
 
       <!-- Drug Summary Callout -->
-      <div style="background: #F8FAFC; border: 1px solid var(--border-light); border-radius: 6px; padding: 0.85rem; margin-bottom: 1.25rem;">
+      <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: 6px; padding: 0.85rem; margin-bottom: 1.25rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
           <div>
-            <h4 id="modal-drug-name" style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0;"></h4>
+            <h4 id="modal-drug-name" style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin: 0;"></h4>
             <div id="modal-mfr-name" style="font-size: 0.78rem; color: var(--text-subtle); margin-top: 0.15rem;"></div>
             <div id="modal-batch-no" style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--color-primary); margin-top: 0.25rem;"></div>
           </div>
@@ -606,7 +606,7 @@ require_once __DIR__ . '/includes/header.php';
       </div>
 
       <!-- Live Calculation Breakdown -->
-      <div style="background: #F1F5F9; border-radius: 6px; padding: 0.85rem; margin-bottom: 1.25rem; font-size: 0.825rem;">
+      <div style="background: var(--bg-surface-subtle); border-radius: 6px; padding: 0.85rem; margin-bottom: 1.25rem; font-size: 0.825rem;">
         <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
           <span style="color: var(--text-subtle);">Taxable Value:</span>
           <span id="calc-taxable" style="font-weight: 700;">₹0.00</span>
@@ -619,8 +619,8 @@ require_once __DIR__ . '/includes/header.php';
           <span style="color: var(--text-subtle);">SGST (6%):</span>
           <span id="calc-sgst" style="font-weight: 700;">₹0.00</span>
         </div>
-        <div style="border-top: 1px solid #CBD5E1; padding-top: 0.4rem; display: flex; justify-content: space-between; font-size: 0.95rem;">
-          <span style="font-weight: 800; color: #0F172A;">Net Invoice Payable:</span>
+        <div style="border-top: 1px solid var(--border-light); padding-top: 0.4rem; display: flex; justify-content: space-between; font-size: 0.95rem;">
+          <span style="font-weight: 800; color: var(--text-main);">Net Invoice Payable:</span>
           <span id="calc-total" style="font-weight: 800; color: #16A34A;">₹0.00</span>
         </div>
       </div>

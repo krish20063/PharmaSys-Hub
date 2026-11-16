@@ -114,12 +114,19 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
   <meta charset="UTF-8">
   <title>404 Not Found &bull; PharmaSys Hub</title>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('pharmasys_theme');
+      const theme = (savedTheme === 'light') ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #F8FAFC;">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-app);">
   <div class="card" style="max-width: 480px; padding: 2.5rem; text-align: center;">
-    <h1 style="font-size: 2.5rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">404</h1>
-    <h2 style="font-size: 1.15rem; color: #475569; margin-bottom: 1.25rem;">Requested Document Not Found</h2>
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">404</h1>
+    <h2 style="font-size: 1.15rem; color: var(--text-muted); margin-bottom: 1.25rem;">Requested Document Not Found</h2>
     <a href="index.php" class="btn btn-primary">&larr; Return to Workspace</a>
   </div>
 </body>

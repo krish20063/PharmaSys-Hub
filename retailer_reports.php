@@ -83,7 +83,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="grid-4" style="margin-bottom: 1.5rem;">
     <div class="card" style="padding: 1rem 1.25rem;">
       <div style="font-size: 0.775rem; color: var(--text-subtle); font-weight: 600;">Total Inventory (MRP)</div>
-      <div style="font-size: 1.8rem; font-weight: 700; color: #0F172A; margin-top: 0.25rem;">₹<?= number_format($totalMrpVal, 2) ?></div>
+      <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;">₹<?= number_format($totalMrpVal, 2) ?></div>
       <div style="font-size: 0.72rem; color: var(--text-subtle);"><?= number_format($valuation['total_units_shelf'] ?? 0) ?> units on pharmacy shelves</div>
     </div>
 
@@ -170,13 +170,13 @@ require_once __DIR__ . '/includes/header.php';
                 </span>
               </td>
               <td>
-                <strong style="color: #0F172A;"><?= htmlspecialchars($m['brand_name']) ?></strong> <?= $m['strength_mg'] ?>mg
+                <strong style="color: var(--text-main);"><?= htmlspecialchars($m['brand_name']) ?></strong> <?= $m['strength_mg'] ?>mg
               </td>
-              <td style="font-size: 0.8rem; color: #475569;"><?= htmlspecialchars($m['salt_composition']) ?></td>
+              <td style="font-size: 0.8rem; color: var(--text-muted);"><?= htmlspecialchars($m['salt_composition']) ?></td>
               <td>
                 <span class="badge badge-neutral" style="font-size: 0.72rem;"><?= htmlspecialchars($m['category']) ?></span>
               </td>
-              <td class="num-cell" style="font-weight: 700; color: #0F172A; text-align: right;">
+              <td class="num-cell" style="font-weight: 700; color: var(--text-main); text-align: right;">
                 <?= number_format($m['units_sold']) ?> units
               </td>
               <td class="num-cell" style="font-weight: 700; color: #059669; text-align: right;">

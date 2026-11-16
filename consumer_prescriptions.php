@@ -201,7 +201,7 @@ require_once __DIR__ . '/includes/header.php';
           <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;">
             <span style="font-size: 0.72rem; color: var(--text-subtle); margin-right: 0.2rem;">Quick Suggestions:</span>
             <?php foreach ($popularDrugs as $d): ?>
-              <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: #F8FAFC;" onclick="appendMedicine('<?= htmlspecialchars(addslashes($d['brand_name'])) ?> <?= $d['strength_mg'] ?>mg')">
+              <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: var(--bg-surface-subtle); color: var(--text-main); border-color: var(--border-light);" onclick="appendMedicine('<?= htmlspecialchars(addslashes($d['brand_name'])) ?> <?= $d['strength_mg'] ?>mg')">
                 + <?= htmlspecialchars($d['brand_name']) ?>
               </button>
             <?php endforeach; ?>
@@ -217,7 +217,7 @@ require_once __DIR__ . '/includes/header.php';
           </div>
 
           <!-- Real-time File Preview Box -->
-          <div id="file-preview-box" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #F8FAFC; border: 1px dashed var(--border-light); border-radius: 6px; text-align: center;">
+          <div id="file-preview-box" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: var(--bg-surface-subtle); border: 1px dashed var(--border-light); border-radius: 6px; text-align: center;">
             <div style="font-size: 0.75rem; color: var(--text-subtle); margin-bottom: 0.35rem;" id="preview-filename"></div>
             <img id="image-preview" src="#" alt="Prescription preview" style="max-height: 180px; max-width: 100%; border-radius: 4px; display: none; margin: 0 auto;">
             <div id="pdf-preview-indicator" style="display: none; font-size: 0.85rem; font-weight: 600; color: #0284C7; padding: 0.5rem;">
@@ -275,7 +275,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                   </td>
                   <td>
-                    <div style="font-size: 0.825rem; font-weight: 600; color: #0F172A; max-width: 220px; line-height: 1.35;">
+                    <div style="font-size: 0.825rem; font-weight: 600; color: var(--text-main); max-width: 220px; line-height: 1.35;">
                       <?= htmlspecialchars($rx['prescribed_medicines'] ?: 'Augmentin 625 Duo, Pan-D 40') ?>
                     </div>
                     <?php if (!empty($rx['notes'])): ?>

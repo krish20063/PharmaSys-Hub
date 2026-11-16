@@ -103,7 +103,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="grid-4" style="margin-bottom: 1.5rem;">
     <div class="card" style="padding: 1rem 1.25rem;">
       <div style="font-size: 0.775rem; color: var(--text-subtle); font-weight: 600;">Audited Events</div>
-      <div style="font-size: 1.8rem; font-weight: 700; color: #0F172A; margin-top: 0.25rem;"><?= count($logs) ?></div>
+      <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;"><?= count($logs) ?></div>
       <div style="font-size: 0.72rem; color: var(--text-subtle);">Recorded in central ledger</div>
     </div>
 

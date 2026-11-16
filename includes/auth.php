@@ -73,18 +73,25 @@ function require_role($allowedRoles): void {
         <head>
           <meta charset="UTF-8">
           <title>403 Forbidden &bull; Role Authorization Conflict</title>
+          <script>
+            (function() {
+              const savedTheme = localStorage.getItem('pharmasys_theme');
+              const theme = (savedTheme === 'light') ? 'light' : 'dark';
+              document.documentElement.setAttribute('data-theme', theme);
+            })();
+          </script>
           <link rel="stylesheet" href="assets/css/style.css">
         </head>
-        <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #F8FAFC;">
+        <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-app);">
           <div class="card" style="max-width: 540px; padding: 2.5rem; text-align: center;">
-            <div style="width: 54px; height: 54px; border-radius: 12px; background: #FEE2E2; color: #DC2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+            <div style="width: 54px; height: 54px; border-radius: 12px; background: var(--color-danger-bg); color: var(--color-danger); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h2 style="font-size: 1.4rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Access Denied (403 Forbidden)</h2>
-            <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 1.5rem; line-height: 1.6;">
+            <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;">Access Denied (403 Forbidden)</h2>
+            <p style="font-size: 0.9rem; color: var(--text-subtle); margin-bottom: 1.5rem; line-height: 1.6;">
               You are authenticated as <strong><?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?></strong> with the role <span class="badge badge-primary"><?= ucfirst(htmlspecialchars($userRole)) ?></span>.<br>
               Network safety policies strictly prevent users from viewing or modifying other participants' operational dashboards.
             </p>

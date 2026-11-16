@@ -301,10 +301,13 @@ code {
   font-family: var(--font-mono);
   background: var(--bg-surface-subtle);
   color: var(--color-primary-dark);
-  padding: 0.12rem 0.35rem;
+  padding: 0.15rem 0.45rem;
   border-radius: var(--radius-xs);
   font-size: 0.85em;
   border: 1px solid var(--border-light);
+  white-space: nowrap !important;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 select.form-control option {
@@ -461,6 +464,79 @@ select.form-control option {
 
 .data-table tbody tr:hover {
   background-color: var(--bg-surface-subtle);
+}
+
+/* Unsafe, Recalled, and Expired Table Rows */
+tr.unsafe-row,
+.unsafe-row {
+  background-color: var(--color-danger-bg) !important;
+  transition: background-color 0.15s ease;
+}
+
+[data-theme="dark"] tr.unsafe-row,
+[data-theme="dark"] .unsafe-row {
+  background-color: rgba(239, 68, 68, 0.14) !important;
+  border-left: 3px solid #EF4444;
+}
+
+[data-theme="dark"] tr.unsafe-row:hover,
+[data-theme="dark"] .unsafe-row:hover {
+  background-color: rgba(239, 68, 68, 0.22) !important;
+}
+
+[data-theme="dark"] tr.unsafe-row td {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] tr.unsafe-row strong {
+  color: #FDA4AF !important; /* High-contrast pastel rose for drug names */
+}
+
+[data-theme="dark"] tr.unsafe-row .num-cell {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] tr.unsafe-row code {
+  background: #0B0F19 !important;
+  color: #38BDF8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+[data-theme="dark"] tr.unsafe-row .badge-danger {
+  background: rgba(239, 68, 68, 0.3) !important;
+  color: #FECACA !important;
+  border-color: rgba(239, 68, 68, 0.6) !important;
+}
+
+[data-theme="dark"] tr.unsafe-row .btn[disabled] {
+  background: rgba(15, 23, 42, 0.8) !important;
+  color: #94A3B8 !important;
+  border-color: rgba(100, 116, 139, 0.4) !important;
+}
+
+[data-theme="light"] tr.unsafe-row,
+[data-theme="light"] .unsafe-row {
+  background-color: #FEF2F2 !important;
+  border-left: 3px solid #DC2626;
+}
+
+[data-theme="light"] tr.unsafe-row:hover,
+[data-theme="light"] .unsafe-row:hover {
+  background-color: #FEE2E2 !important;
+}
+
+[data-theme="light"] tr.unsafe-row td {
+  color: #0F172A !important;
+}
+
+[data-theme="light"] tr.unsafe-row strong {
+  color: #991B1B !important;
+}
+
+[data-theme="light"] tr.unsafe-row code {
+  background: #FFFFFF !important;
+  color: #0369A1 !important;
+  border-color: #BAE6FD !important;
 }
 
 .num-cell {

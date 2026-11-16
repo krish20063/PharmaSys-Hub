@@ -173,8 +173,7 @@ require_once __DIR__ . '/includes/header.php';
               <tr class="pos-item-row <?= $isUnsafe ? 'unsafe-row' : '' ?>" 
                   data-search="<?= strtolower($item['brand_name'] . ' ' . $item['salt_composition'] . ' ' . $item['batch_number']) ?>"
                   data-brand="<?= strtolower(htmlspecialchars($item['brand_name'])) ?>"
-                  data-unsafe="<?= $isUnsafe ? '1' : '0' ?>"
-                  style="<?= $isUnsafe ? 'background-color: #FEF2F2;' : '' ?>">
+                  data-unsafe="<?= $isUnsafe ? '1' : '0' ?>">
                 <td>
                   <strong><?= htmlspecialchars($item['brand_name']) ?></strong>
                   <div style="font-size: 0.725rem; color: var(--text-subtle);">

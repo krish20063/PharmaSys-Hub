@@ -181,15 +181,22 @@ function require_csrf(): void {
                 <head>
                   <meta charset="UTF-8">
                   <title>403 Forbidden &bull; CSRF Validation Failed</title>
+                  <script>
+                    (function() {
+                      const savedTheme = localStorage.getItem('pharmasys_theme');
+                      const theme = (savedTheme === 'light') ? 'light' : 'dark';
+                      document.documentElement.setAttribute('data-theme', theme);
+                    })();
+                  </script>
                   <link rel="stylesheet" href="assets/css/style.css">
                 </head>
-                <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #F8FAFC;">
+                <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-app);">
                   <div class="card" style="max-width: 500px; padding: 2.25rem; text-align: center;">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #FEE2E2; color: #DC2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-danger-bg); color: var(--color-danger); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
                       🛡️
                     </div>
-                    <h2 style="font-size: 1.3rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Security Token Invalid</h2>
-                    <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;">Security Token Invalid</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-subtle); margin-bottom: 1.5rem;">
                       Your form submission could not be verified due to an expired or missing cross-site request token.
                     </p>
                     <a href="javascript:history.back()" class="btn btn-primary">&larr; Return &amp; Try Again</a>
@@ -259,13 +266,20 @@ function enforce_rate_limit(string $actionKey, int $maxAttempts = 5, int $decayS
             <head>
               <meta charset="UTF-8">
               <title>429 Too Many Requests &bull; Rate Limit Lock</title>
+              <script>
+                (function() {
+                  const savedTheme = localStorage.getItem('pharmasys_theme');
+                  const theme = (savedTheme === 'light') ? 'light' : 'dark';
+                  document.documentElement.setAttribute('data-theme', theme);
+                })();
+              </script>
               <link rel="stylesheet" href="assets/css/style.css">
             </head>
-            <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #F8FAFC;">
+            <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-app);">
               <div class="card" style="max-width: 480px; padding: 2.25rem; text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 0.75rem;">⏱️</div>
-                <h2 style="font-size: 1.3rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Rate Limit Exceeded</h2>
-                <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 1.25rem;">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;">Rate Limit Exceeded</h2>
+                <p style="font-size: 0.85rem; color: var(--text-subtle); margin-bottom: 1.25rem;">
                   Too many attempts detected from your connection. Please wait <strong><?= $status['retry_after'] ?> seconds</strong> before trying again.
                 </p>
                 <a href="javascript:location.reload()" class="btn btn-primary">Refresh Page</a>

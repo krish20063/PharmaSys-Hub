@@ -176,7 +176,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="grid-4" style="margin-bottom: 1.5rem;">
     <div class="card" style="padding: 1rem 1.25rem;">
       <div style="font-size: 0.775rem; color: var(--text-subtle); font-weight: 600;">Total H1 Entries</div>
-      <div style="font-size: 1.8rem; font-weight: 700; color: #0F172A; margin-top: 0.25rem;"><?= count($allH1) ?></div>
+      <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;"><?= count($allH1) ?></div>
       <div style="font-size: 0.72rem; color: var(--text-subtle);">Preserved in digital ledger</div>
     </div>
 
@@ -242,19 +242,19 @@ require_once __DIR__ . '/includes/header.php';
                 <?= date('h:i A', strtotime($r['sale_date'])) ?>
               </td>
               <td>
-                <strong style="color: #0F172A;"><?= htmlspecialchars($r['consumer_name']) ?></strong>
+                <strong style="color: var(--text-main);"><?= htmlspecialchars($r['consumer_name']) ?></strong>
                 <div style="font-size: 0.725rem; color: var(--text-subtle);">
                   Phone: <a href="tel:<?= htmlspecialchars($r['consumer_phone']) ?>" style="color: var(--color-primary); text-decoration: none;"><?= htmlspecialchars($r['consumer_phone']) ?></a>
                 </div>
               </td>
               <td>
-                <strong style="color: #334155;"><?= htmlspecialchars($r['doctor_name']) ?></strong>
+                <strong style="color: var(--text-muted);"><?= htmlspecialchars($r['doctor_name']) ?></strong>
                 <div style="font-size: 0.72rem; color: #059669; font-family: var(--font-mono);">
                   Reg: <?= htmlspecialchars($r['doctor_reg']) ?>
                 </div>
               </td>
               <td>
-                <strong><?= htmlspecialchars($r['brand_name']) ?></strong> <?= $r['strength_mg'] ?>mg
+                <strong style="color: var(--text-main);"><?= htmlspecialchars($r['brand_name']) ?></strong> <?= $r['strength_mg'] ?>mg
                 <div style="font-size: 0.725rem; color: var(--text-subtle);"><?= htmlspecialchars($r['salt_composition']) ?></div>
                 <span class="badge badge-warning" style="font-size: 0.65rem; margin-top: 0.2rem;"><?= htmlspecialchars($r['schedule_type']) ?></span>
               </td>
@@ -262,7 +262,7 @@ require_once __DIR__ . '/includes/header.php';
                 <code style="font-family: var(--font-mono); font-size: 0.8rem;"><?= htmlspecialchars($r['batch_number']) ?></code>
                 <div style="font-size: 0.72rem; color: var(--text-subtle);">Exp: <?= date('M-Y', strtotime($r['expiry_date'])) ?></div>
               </td>
-              <td class="num-cell" style="font-weight: 700; color: #0F172A; text-align: right;">
+              <td class="num-cell" style="font-weight: 700; color: var(--text-main); text-align: right;">
                 <?= number_format($r['quantity']) ?> units
               </td>
               <td>

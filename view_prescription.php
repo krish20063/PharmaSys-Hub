@@ -158,22 +158,22 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- Patient & Physician Information Block -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: #F8FAFC; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #E2E8F0;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: var(--bg-surface-subtle); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-light);">
       <div>
-        <div style="font-size: 0.72rem; text-transform: uppercase; color: #64748B; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Patient Demographics</div>
-        <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A;"><?= htmlspecialchars($rx['patient_name']) ?></div>
-        <div style="font-size: 0.825rem; color: #475569; margin-top: 0.2rem;">
+        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-subtle); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Patient Demographics</div>
+        <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);"><?= htmlspecialchars($rx['patient_name']) ?></div>
+        <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
           Phone: <strong><?= htmlspecialchars($rx['consumer_phone']) ?></strong> &bull; User ID: #PAT-<?= $rx['consumer_id'] ?>
         </div>
         <?php if ($rx['consumer_address']): ?>
-          <div style="font-size: 0.775rem; color: #64748B; margin-top: 0.2rem;"><?= htmlspecialchars($rx['consumer_address']) ?></div>
+          <div style="font-size: 0.775rem; color: var(--text-subtle); margin-top: 0.2rem;"><?= htmlspecialchars($rx['consumer_address']) ?></div>
         <?php endif; ?>
       </div>
 
       <div>
-        <div style="font-size: 0.72rem; text-transform: uppercase; color: #64748B; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Prescribing Physician</div>
-        <div style="font-size: 1.05rem; font-weight: 700; color: #0F172A;"><?= htmlspecialchars($rx['doctor_name']) ?></div>
-        <div style="font-size: 0.825rem; color: #475569; margin-top: 0.2rem;">
+        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-subtle); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Prescribing Physician</div>
+        <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);"><?= htmlspecialchars($rx['doctor_name']) ?></div>
+        <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
           Medical Council Reg: <strong>MCI-REG-44910/MH</strong>
         </div>
         <div style="font-size: 0.775rem; color: #10B981; margin-top: 0.2rem; font-weight: 600;">
@@ -184,11 +184,11 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- 1. The Medicine Written in the Prescription -->
     <div style="margin-bottom: 1.75rem;">
-      <h3 style="font-size: 1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+      <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
         <?= icon('activity', 16) ?> Medicines Written in Prescription Slip
       </h3>
       
-      <div class="table-wrapper" style="border: 1px solid #E2E8F0; border-radius: 6px;">
+      <div class="table-wrapper" style="border: 1px solid var(--border-light); border-radius: 6px;">
         <table class="data-table" style="margin: 0;">
           <thead>
             <tr>
@@ -220,8 +220,8 @@ require_once __DIR__ . '/includes/header.php';
               <tr>
                 <td style="font-family: var(--font-mono); font-weight: bold; width: 40px;"><?= $idx++ ?></td>
                 <td>
-                  <strong style="color: #0F172A; font-size: 0.925rem;"><?= htmlspecialchars($m) ?></strong>
-                  <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.15rem;">Prescribed as directed by physician</div>
+                  <strong style="color: var(--text-main); font-size: 0.925rem;"><?= htmlspecialchars($m) ?></strong>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle); margin-top: 0.15rem;">Prescribed as directed by physician</div>
                 </td>
                 <td>
                   <span class="badge badge-warning"><?= icon('shield-alert', 10) ?> Schedule H</span>
@@ -242,19 +242,19 @@ require_once __DIR__ . '/includes/header.php';
       </div>
 
       <?php if (!empty($rx['notes'])): ?>
-        <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.825rem; color: #334155; margin-top: 0.75rem;">
+        <div style="background: var(--bg-surface-subtle); border: 1px dashed var(--border-subtle); border-radius: 6px; padding: 0.85rem 1rem; font-size: 0.825rem; color: var(--text-muted); margin-top: 0.75rem;">
           <strong>Clinical Diagnosis &amp; Notes:</strong> <?= nl2br(htmlspecialchars($rx['notes'])) ?>
         </div>
       <?php endif; ?>
     </div>
 
     <!-- 2. The Uploaded Prescription Document -->
-    <div style="border-top: 1px solid #E2E8F0; padding-top: 1.5rem;">
+    <div style="border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-        <h4 style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 0; display: flex; align-items: center; gap: 0.4rem;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 0.4rem;">
           <?= icon('file-text', 16) ?> Uploaded Prescription Document / Certified Slip
         </h4>
-        <span style="font-size: 0.75rem; color: #64748B; font-family: var(--font-mono);"><?= htmlspecialchars($rx['file_name']) ?></span>
+        <span style="font-size: 0.75rem; color: var(--text-subtle); font-family: var(--font-mono);"><?= htmlspecialchars($rx['file_name']) ?></span>
       </div>
 
       <?php if ($fileExists): ?>

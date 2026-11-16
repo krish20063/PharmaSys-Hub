@@ -104,7 +104,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="grid-4" style="margin-bottom: 1.5rem;">
     <div class="card" style="padding: 1rem 1.25rem;">
       <div style="font-size: 0.775rem; color: var(--text-subtle); font-weight: 600;">Registered Patients</div>
-      <div style="font-size: 1.8rem; font-weight: 700; color: #0F172A; margin-top: 0.25rem;"><?= count($allCustomers) ?></div>
+      <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;"><?= count($allCustomers) ?></div>
       <div style="font-size: 0.72rem; color: var(--text-subtle);">Active pharmacy customer accounts</div>
     </div>
 
@@ -158,7 +158,7 @@ require_once __DIR__ . '/includes/header.php';
           <?php foreach ($allCustomers as $c): ?>
             <tr class="cust-row" data-search="<?= strtolower(htmlspecialchars($c['patient_name'] . ' ' . $c['phone'] . ' ' . ($c['address'] ?? ''))) ?>">
               <td>
-                <strong style="color: #0F172A;"><?= htmlspecialchars($c['patient_name']) ?></strong>
+                <strong style="color: var(--text-main);"><?= htmlspecialchars($c['patient_name']) ?></strong>
                 <div style="font-size: 0.72rem; color: var(--text-subtle);"><?= htmlspecialchars($c['email'] ?? 'counter.patient@pharmasys.com') ?></div>
               </td>
               <td>

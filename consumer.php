@@ -15,7 +15,7 @@ require_once __DIR__ . '/includes/header.php';
 <div class="container" style="max-width: 1040px; margin: 1.5rem auto;">
   <div class="page-header-flex" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h2 style="font-size: 1.35rem; font-weight: 700; color: #0F172A; margin: 0 0 0.25rem 0;">
+      <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.25rem 0;">
         Medicine Search &amp; Composition Substitute Finder
       </h2>
       <p style="font-size: 0.825rem; color: var(--text-subtle); margin: 0;">

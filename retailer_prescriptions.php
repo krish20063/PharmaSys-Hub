@@ -156,7 +156,7 @@ require_once __DIR__ . '/includes/header.php';
         <span style="font-size: 0.775rem; color: var(--text-subtle); font-weight: 600;">Total Patient Queue</span>
         <span class="badge badge-neutral"><?= icon('file-text', 12) ?> Audit</span>
       </div>
-      <div style="font-size: 1.8rem; font-weight: 700; color: #0F172A; margin-top: 0.35rem;"><?= count($allPrescriptions) ?></div>
+      <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;"><?= count($allPrescriptions) ?></div>
       <div style="font-size: 0.72rem; color: var(--text-subtle);">Recorded in central digital registry</div>
     </div>
   </div>
@@ -222,7 +222,7 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- Patient Details -->
                 <td>
-                  <strong style="color: #0F172A; font-size: 0.9rem;"><?= htmlspecialchars($rx['patient_name']) ?></strong>
+                  <strong style="color: var(--text-main); font-size: 0.9rem;"><?= htmlspecialchars($rx['patient_name']) ?></strong>
                   <div style="font-size: 0.725rem; color: var(--text-subtle); margin-top: 0.15rem;">
                     Phone: <a href="tel:<?= htmlspecialchars($rx['consumer_phone']) ?>" style="color: var(--color-primary); text-decoration: none; font-weight: 600;"><?= htmlspecialchars($rx['consumer_phone']) ?></a>
                   </div>
@@ -232,7 +232,7 @@ require_once __DIR__ . '/includes/header.php';
                 <!-- 1. The Uploaded Prescription (Interactive Thumbnail & Modal Launcher) -->
                 <td>
                   <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <div style="position: relative; width: 64px; height: 64px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-light); background: #F8FAFC; cursor: pointer; flex-shrink: 0;" onclick="openDocPreview(<?= $rx['id'] ?>, '<?= htmlspecialchars(addslashes($rx['patient_name'])) ?>', '<?= htmlspecialchars(addslashes($rx['file_name'])) ?>', <?= $isImageOrSvg ? 'true' : 'false' ?>)" title="Click to inspect uploaded prescription document">
+                    <div style="position: relative; width: 64px; height: 64px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-light); background: var(--bg-surface-subtle); cursor: pointer; flex-shrink: 0;" onclick="openDocPreview(<?= $rx['id'] ?>, '<?= htmlspecialchars(addslashes($rx['patient_name'])) ?>', '<?= htmlspecialchars(addslashes($rx['file_name'])) ?>', <?= $isImageOrSvg ? 'true' : 'false' ?>)" title="Click to inspect uploaded prescription document">
                       <?php if ($isImageOrSvg): ?>
                         <img src="view_prescription.php?id=<?= $rx['id'] ?>&raw=1" alt="Prescription" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; inset: 0; background: rgba(15,23,42,0.3); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
@@ -259,7 +259,7 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- 2. The Medicine Written in the Prescription -->
                 <td>
-                  <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.6rem 0.75rem;">
+                  <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: 6px; padding: 0.6rem 0.75rem;">
                     <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-primary-dark); font-weight: 700; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.3rem;">
                       <?= icon('activity', 12) ?> Prescribed Formulations:
                     </div>
@@ -281,8 +281,8 @@ require_once __DIR__ . '/includes/header.php';
                             }
                           }
                         ?>
-                        <div style="font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 0.25rem;">
-                          <strong style="color: #0F172A;"><?= htmlspecialchars($m) ?></strong>
+                        <div style="font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-light); padding-bottom: 0.25rem;">
+                          <strong style="color: var(--text-main);"><?= htmlspecialchars($m) ?></strong>
                           <div>
                             <?php if ($matchedName): ?>
                               <span class="badge badge-success" style="font-size: 0.68rem; padding: 0.1rem 0.35rem;">

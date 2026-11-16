@@ -126,7 +126,7 @@ require_once __DIR__ . '/includes/header.php';
               $isRecalled = (int)$item['is_recalled'] === 1;
               $isLow = (int)$item['quantity'] <= (int)$item['min_threshold'];
             ?>
-            <tr class="inv-row" data-search="<?= strtolower($item['brand_name'] . ' ' . $item['salt_composition'] . ' ' . $item['batch_number'] . ' ' . $item['warehouse_rack_location']) ?>">
+            <tr class="inv-row <?= ($isExpired || $isRecalled) ? 'unsafe-row' : '' ?>" data-search="<?= strtolower($item['brand_name'] . ' ' . $item['salt_composition'] . ' ' . $item['batch_number'] . ' ' . $item['warehouse_rack_location']) ?>">
               <td>
                 <strong><?= htmlspecialchars($item['brand_name']) ?></strong>
                 <div style="font-size: 0.725rem; color: var(--text-subtle);">
