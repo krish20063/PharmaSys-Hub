@@ -186,10 +186,10 @@ DELIMITER ;
 
 -- Seed Users (Password for all: password123)
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `phone`, `license_no`, `address`) VALUES
-(1, 'Apex LifeSciences Manufacturing Ltd.', 'manufacturer@pharmasys.com', '$2y$10$e8460p7P1R3jS2eH3qF/a.n8sD602Xqf05WfQ9g2MpmVv1Xk1yQmu', 'manufacturer', '+91 98201 10022', 'MFG/MH/2023/1042', 'MIDC Pharma Tech Zone, Tarapur, Mumbai'),
-(2, 'Nexus Healthcare Logistics Pvt. Ltd.', 'distributor@pharmasys.com', '$2y$10$e8460p7P1R3jS2eH3qF/a.n8sD602Xqf05WfQ9g2MpmVv1Xk1yQmu', 'distributor', '+91 98202 20033', 'DIST-MH-2022-8819', 'Warehouse Complex B4, Bhiwandi, Thane'),
-(3, 'CareFirst Community Pharmacy', 'retailer@pharmasys.com', '$2y$10$e8460p7P1R3jS2eH3qF/a.n8sD602Xqf05WfQ9g2MpmVv1Xk1yQmu', 'retailer', '+91 98203 30044', 'DL-20B/21B-MH-49201', 'Shop 4, Sunrise Heights, Bandra West, Mumbai'),
-(4, 'Rahul Sharma (Patient)', 'consumer@pharmasys.com', '$2y$10$e8460p7P1R3jS2eH3qF/a.n8sD602Xqf05WfQ9g2MpmVv1Xk1yQmu', 'consumer', '+91 98765 43213', NULL, '402 Palm Breeze, Linking Road, Mumbai');
+(1, 'Apex LifeSciences Manufacturing Ltd.', 'manufacturer@pharmasys.com', '$2y$10$MSdqMCagLkMLZjp.EC9JseS0tECe5hz9ZYVZ7BdeIq/hYATps.CcW', 'manufacturer', '+91 98201 10022', 'MFG/MH/2023/1042', 'MIDC Pharma Tech Zone, Tarapur, Mumbai'),
+(2, 'Nexus Healthcare Logistics Pvt. Ltd.', 'distributor@pharmasys.com', '$2y$10$MSdqMCagLkMLZjp.EC9JseS0tECe5hz9ZYVZ7BdeIq/hYATps.CcW', 'distributor', '+91 98202 20033', 'DIST-MH-2022-8819', 'Warehouse Complex B4, Bhiwandi, Thane'),
+(3, 'CareFirst Community Pharmacy', 'retailer@pharmasys.com', '$2y$10$MSdqMCagLkMLZjp.EC9JseS0tECe5hz9ZYVZ7BdeIq/hYATps.CcW', 'retailer', '+91 98203 30044', 'DL-20B/21B-MH-49201', 'Shop 4, Sunrise Heights, Bandra West, Mumbai'),
+(4, 'Rahul Sharma (Patient)', 'consumer@pharmasys.com', '$2y$10$MSdqMCagLkMLZjp.EC9JseS0tECe5hz9ZYVZ7BdeIq/hYATps.CcW', 'consumer', '+91 98765 43213', NULL, '402 Palm Breeze, Linking Road, Mumbai');
 
 -- Seed Large Medicine Catalog
 INSERT INTO `medicine_master` (`id`, `brand_name`, `generic_name`, `salt_composition`, `strength_mg`, `dosage_form`, `category`, `schedule_type`, `price_mrp`) VALUES
