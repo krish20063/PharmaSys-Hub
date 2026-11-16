@@ -1,0 +1,46 @@
+# =====================================================================
+# PharmaSys Hub - Production Security .htaccess
+# Enforces Level-4 RBAC Protection, MIME Lockdown, and Directory Privacy
+# =====================================================================
+
+# Disable Directory Browsing
+Options -Indexes -MultiViews
+
+# Default Index File
+DirectoryIndex index.php
+
+# Block Sensitive Files and Hidden Assets
+<FilesMatch "^\.|\.(env|db|sqlite|sqlite3|sql|log|ini|sh|bak|json|md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Explicitly Block .env and Databases
+<Files ".env">
+    Require all denied
+</Files>
+<FilesMatch "\.db$">
+    Require all denied
+</FilesMatch>
+
+# Block Protected Internal Directories
+RedirectMatch 403 ^/config(/.*)?$
+RedirectMatch 403 ^/database(/.*)?$
+RedirectMatch 403 ^/logs(/.*)?$
+RedirectMatch 403 ^/scripts(/.*)?$
+RedirectMatch 403 ^/\.vscode(/.*)?$
+
+# HTTP Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+</IfModule>
+

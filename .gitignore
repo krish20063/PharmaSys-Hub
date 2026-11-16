@@ -1,0 +1,38 @@
+# Secrets and Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Databases & Backups
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Server Logs & Errors
+logs/*.log
+logs/*.txt
+
+# User Uploads (Preserve sample SVGs, ignore runtime user uploads)
+uploads/prescriptions/*
+!uploads/prescriptions/*.svg
+!uploads/prescriptions/.gitkeep
+
+# Temporary & Test Files
+scratch/
+test_*.txt
+test_*.php
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor Cache
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
