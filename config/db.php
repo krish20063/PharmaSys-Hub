@@ -32,12 +32,27 @@ class Database {
                     PDO::ATTR_EMULATE_PREPARES => false,
                     PDO::ATTR_TIMEOUT => 5
                 ];
+
+                // Check CA certificate bundle for Cloud TLS/SSL (TiDB Cloud, Aiven, PlanetScale, AWS RDS)
+                $caCandidates = [
+                    __DIR__ . '/cacert.pem',
+                    '/etc/ssl/certs/ca-certificates.crt',
+                    '/etc/pki/tls/certs/ca-bundle.crt',
+                    ini_get('openssl.cafile') ?: '',
+                    ini_get('curl.cainfo') ?: ''
+                ];
+                foreach ($caCandidates as $ca) {
+                    if (!empty($ca) && file_exists($ca)) {
+                        $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
+                        break;
+                    }
+                }
                 if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
                     $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
                 }
                 self::$pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
                 self::$driver = 'mysql';
-                self::$status = 'MySQL Live';
+                self::$status = 'MySQL Live (Cloud)';
 
                 // Auto-bootstrap schema if connecting to a fresh cloud MySQL instance
                 try {

@@ -11,3 +11,4 @@ if (!defined('VERCEL_ENVIRONMENT')) {
 
 // Delegate execution to the master router
 require __DIR__ . '/../router.php';
+
