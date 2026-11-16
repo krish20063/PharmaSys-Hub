@@ -4,11 +4,13 @@
  */
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/includes/auth.php';
 
 if (!empty($_SESSION['user_id'])) {
     Database::logAudit('AUTH_LOGOUT', 'USER', (string)$_SESSION['user_id'], "User signed out.");
 }
 
+clear_auth_cookie();
 $_SESSION = [];
 
 if (ini_get("session.use_cookies")) {

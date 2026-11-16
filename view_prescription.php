@@ -34,7 +34,7 @@ if ($user['role'] === 'consumer') {
         die("Unauthorized (403): You do not have permission to view another patient's prescription.");
     }
 } elseif ($user['role'] === 'retailer') {
-    if (isset($rx['retailer_id']) && (int)$rx['retailer_id'] !== (int)$user['id']) {
+    if (!empty($rx['retailer_id']) && (int)$rx['retailer_id'] !== (int)$user['id']) {
         http_response_code(403);
         die("Unauthorized (403): You do not have permission to view prescriptions assigned to a competitor pharmacy.");
     }
@@ -51,26 +51,56 @@ $filePath = $uploadDir . '/' . basename($fileName);
 $fileExists = file_exists($filePath) && !is_dir($filePath);
 
 // Serve raw file if requested (with strict CSP sandbox to neutralize SVG script execution)
-if (isset($_GET['raw']) && $_GET['raw'] == 1 && $fileExists) {
+if (isset($_GET['raw']) && $_GET['raw'] == 1) {
     header("X-Content-Type-Options: nosniff");
     header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'");
 
-    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-    if ($ext === 'svg') {
-        header("Content-Type: image/svg+xml");
-    } elseif (in_array($ext, ['jpg', 'jpeg'])) {
-        header("Content-Type: image/jpeg");
-    } elseif ($ext === 'png') {
-        header("Content-Type: image/png");
-    } elseif ($ext === 'webp') {
-        header("Content-Type: image/webp");
-    } elseif ($ext === 'pdf') {
-        header("Content-Type: application/pdf");
-    } else {
-        header("Content-Type: application/octet-stream");
+    // 1. If stored in DB (BLOB / data)
+    if (!empty($rx['file_data'])) {
+        $mime = $rx['file_mime'] ?? '';
+        if (empty($mime)) {
+            $ext = strtolower(pathinfo($rx['file_name'] ?? '', PATHINFO_EXTENSION));
+            $mimes = [
+                'svg' => 'image/svg+xml',
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'webp' => 'image/webp',
+                'pdf' => 'application/pdf'
+            ];
+            $mime = $mimes[$ext] ?? 'image/jpeg';
+        }
+        header("Content-Type: {$mime}");
+        header("Content-Disposition: inline; filename=\"" . basename($rx['file_name'] ?? 'prescription') . "\"");
+        echo $rx['file_data'];
+        exit;
     }
-    header("Content-Disposition: inline; filename=\"" . basename($fileName) . "\"");
-    readfile($filePath);
+
+    // 2. If physical file exists on disk
+    if ($fileExists) {
+        $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        if ($ext === 'svg') {
+            header("Content-Type: image/svg+xml");
+        } elseif (in_array($ext, ['jpg', 'jpeg'])) {
+            header("Content-Type: image/jpeg");
+        } elseif ($ext === 'png') {
+            header("Content-Type: image/png");
+        } elseif ($ext === 'webp') {
+            header("Content-Type: image/webp");
+        } elseif ($ext === 'pdf') {
+            header("Content-Type: application/pdf");
+        } else {
+            header("Content-Type: application/octet-stream");
+        }
+        header("Content-Disposition: inline; filename=\"" . basename($fileName) . "\"");
+        readfile($filePath);
+        exit;
+    }
+
+    // 3. Fallback: Dynamic SVG Generation on the fly (for Vercel serverless / ephemeral FS)
+    header("Content-Type: image/svg+xml");
+    header("Content-Disposition: inline; filename=\"Rx_" . $rx['id'] . ".svg\"");
+    echo generatePrescriptionSvg($rx);
     exit;
 }
 
@@ -257,23 +287,21 @@ require_once __DIR__ . '/includes/header.php';
         <span style="font-size: 0.75rem; color: var(--text-subtle); font-family: var(--font-mono);"><?= htmlspecialchars($rx['file_name']) ?></span>
       </div>
 
-      <?php if ($fileExists): ?>
-        <?php
-          $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-        ?>
-        <?php if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'svg'])): ?>
-          <div style="text-align: center; background: var(--bg-surface-subtle); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-light);">
-            <img src="view_prescription.php?id=<?= $rx['id'] ?>&raw=1" alt="Prescription Document" style="max-width: 100%; max-height: 600px; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); background: var(--bg-surface);">
-          </div>
-        <?php elseif ($ext === 'pdf'): ?>
-          <div style="background: var(--bg-surface-subtle); border-radius: 8px; padding: 1.5rem; text-align: center; border: 1px solid var(--border-light);">
-            <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;"><?= icon('file-text', 24) ?><br><?= htmlspecialchars($rx['file_name']) ?></div>
-            <p style="font-size: 0.825rem; color: var(--text-subtle); margin-bottom: 1rem;">PDF Medical Document Attached &bull; <?= round(filesize($filePath) / 1024, 1) ?> KB</p>
-            <a href="view_prescription.php?id=<?= $rx['id'] ?>&raw=1" target="_blank" class="btn btn-primary btn-sm">
-              <?= icon('search', 14) ?> Open Original PDF Document in New Tab
-            </a>
-          </div>
-        <?php endif; ?>
+      <?php 
+        $isPdf = ($rx['file_mime'] ?? '') === 'application/pdf' || strtolower(pathinfo($rx['file_name'] ?? '', PATHINFO_EXTENSION)) === 'pdf';
+      ?>
+      <?php if ($isPdf): ?>
+        <div style="background: var(--bg-surface-subtle); border-radius: 8px; padding: 1.5rem; text-align: center; border: 1px solid var(--border-light);">
+          <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;"><?= icon('file-text', 24) ?><br><?= htmlspecialchars($rx['file_name']) ?></div>
+          <p style="font-size: 0.825rem; color: var(--text-subtle); margin-bottom: 1rem;">PDF Medical Document Attached</p>
+          <a href="view_prescription.php?id=<?= $rx['id'] ?>&raw=1" target="_blank" class="btn btn-primary btn-sm">
+            <?= icon('search', 14) ?> Open Original PDF Document in New Tab
+          </a>
+        </div>
+      <?php else: ?>
+        <div style="text-align: center; background: var(--bg-surface-subtle); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-light);">
+          <img src="view_prescription.php?id=<?= $rx['id'] ?>&raw=1" alt="Prescription Document" style="max-width: 100%; max-height: 600px; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); background: var(--bg-surface);">
+        </div>
       <?php endif; ?>
     </div>
 

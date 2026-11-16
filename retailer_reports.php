@@ -43,17 +43,17 @@ $topStmt = $pdo->prepare("
     SELECT m.brand_name, m.salt_composition, m.strength_mg, m.category,
            SUM(si.quantity) as units_sold,
            SUM(si.total_price) as revenue,
-           COALESCE((SELECT quantity FROM inventory WHERE batch_id = si.batch_id AND user_id = :uid), 0) as stock_left
+           COALESCE((SELECT SUM(inv_sub.quantity) FROM inventory inv_sub JOIN batches b_sub ON inv_sub.batch_id = b_sub.id WHERE b_sub.medicine_id = m.id AND inv_sub.user_id = :uid1), 0) as stock_left
     FROM sales_items si
     JOIN batches b ON si.batch_id = b.id
     JOIN medicine_master m ON b.medicine_id = m.id
     JOIN sales_invoices inv ON si.invoice_id = inv.id
-    WHERE inv.retailer_id = :uid
-    GROUP BY m.id
+    WHERE inv.retailer_id = :uid2
+    GROUP BY m.id, m.brand_name, m.salt_composition, m.strength_mg, m.category
     ORDER BY units_sold DESC
     LIMIT 6
 ");
-$topStmt->execute([':uid' => $_SESSION['user_id']]);
+$topStmt->execute([':uid1' => $_SESSION['user_id'], ':uid2' => $_SESSION['user_id']]);
 $topMeds = $topStmt->fetchAll();
 
 // If few top meds, supplement with realistic clinical analytics

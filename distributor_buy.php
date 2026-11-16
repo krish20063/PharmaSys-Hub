@@ -150,8 +150,11 @@ if (!empty($filterCat)) {
     $params[':cat'] = $filterCat;
 }
 if (!empty($searchQ)) {
-    $sql .= " AND (m.brand_name LIKE :q OR m.generic_name LIKE :q OR b.batch_number LIKE :q OR m.salt_composition LIKE :q)";
-    $params[':q'] = "%{$searchQ}%";
+    $sql .= " AND (m.brand_name LIKE :q1 OR m.generic_name LIKE :q2 OR b.batch_number LIKE :q3 OR m.salt_composition LIKE :q4)";
+    $params[':q1'] = "%{$searchQ}%";
+    $params[':q2'] = "%{$searchQ}%";
+    $params[':q3'] = "%{$searchQ}%";
+    $params[':q4'] = "%{$searchQ}%";
 }
 
 $sql .= " ORDER BY b.id DESC LIMIT 40";

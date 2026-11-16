@@ -114,15 +114,15 @@ $shelfStmt = $pdo->prepare("
     FROM inventory inv
     JOIN batches b ON inv.batch_id = b.id
     JOIN medicine_master m ON b.medicine_id = m.id
-    WHERE inv.user_id = :uid 
+    WHERE inv.user_id = :uid1 
       AND inv.quantity > 0
       AND b.id NOT IN (
           SELECT batch_id FROM return_claims 
-          WHERE retailer_id = :uid AND status IN ('dispatched', 'received_quarantine')
+          WHERE retailer_id = :uid2 AND status IN ('dispatched', 'received_quarantine')
       )
     ORDER BY b.is_expired DESC, b.is_recalled DESC, b.expiry_date ASC
 ");
-$shelfStmt->execute([':uid' => $retailerId]);
+$shelfStmt->execute([':uid1' => $retailerId, ':uid2' => $retailerId]);
 $shelfItems = $shelfStmt->fetchAll();
 
 // Fetch past return claims

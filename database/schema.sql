@@ -8,6 +8,7 @@ USE `pharmasys_hub`;
 SET GLOBAL event_scheduler = ON;
 
 DROP TABLE IF EXISTS `return_claims`;
+DROP TABLE IF EXISTS `distributor_orders`;
 DROP TABLE IF EXISTS `notifications`;
 DROP TABLE IF EXISTS `sales_items`;
 DROP TABLE IF EXISTS `sales_invoices`;
@@ -105,6 +106,28 @@ CREATE TABLE `return_claims` (
   FOREIGN KEY (`batch_id`) REFERENCES `batches`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE `distributor_orders` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `po_number` VARCHAR(50) NOT NULL UNIQUE,
+  `distributor_id` INT NOT NULL,
+  `manufacturer_id` INT NOT NULL,
+  `batch_id` INT NOT NULL,
+  `quantity` INT NOT NULL,
+  `unit_price` DECIMAL(10,2) NOT NULL,
+  `taxable_amount` DECIMAL(10,2) NOT NULL,
+  `cgst_amount` DECIMAL(10,2) NOT NULL,
+  `sgst_amount` DECIMAL(10,2) NOT NULL,
+  `total_amount` DECIMAL(10,2) NOT NULL,
+  `destination_rack` VARCHAR(100) DEFAULT 'Bay-A1-Ambient',
+  `payment_mode` VARCHAR(100) DEFAULT 'B2B Credit (30 Days)',
+  `status` VARCHAR(50) NOT NULL DEFAULT 'received_in_warehouse',
+  `order_date` DATE NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`distributor_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`manufacturer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`batch_id`) REFERENCES `batches`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE `dispatch_challans` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `challan_number` VARCHAR(50) NOT NULL UNIQUE,
@@ -155,6 +178,8 @@ CREATE TABLE `prescriptions` (
   `patient_name` VARCHAR(150) NOT NULL,
   `doctor_name` VARCHAR(150) NOT NULL,
   `file_name` VARCHAR(255) NOT NULL,
+  `file_data` MEDIUMBLOB DEFAULT NULL,
+  `file_mime` VARCHAR(100) DEFAULT NULL,
   `prescribed_medicines` TEXT DEFAULT NULL,
   `notes` TEXT DEFAULT NULL,
   `status` ENUM('pending', 'verified', 'rejected') NOT NULL DEFAULT 'pending',

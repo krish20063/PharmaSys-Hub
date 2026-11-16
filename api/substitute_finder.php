@@ -50,7 +50,7 @@ try {
         $stmt = $pdo->prepare("
             SELECT m.*
             FROM medicine_master m
-            WHERE m.brand_name LIKE :q OR m.generic_name LIKE :q OR m.salt_composition LIKE :q
+            WHERE m.brand_name LIKE :q1 OR m.generic_name LIKE :q2 OR m.salt_composition LIKE :q3
             ORDER BY 
               CASE WHEN m.brand_name LIKE :q_exact THEN 1
                    WHEN m.brand_name LIKE :q_start THEN 2
@@ -59,7 +59,9 @@ try {
             LIMIT 8
         ");
         $stmt->execute([
-            ':q' => "%{$query}%",
+            ':q1' => "%{$query}%",
+            ':q2' => "%{$query}%",
+            ':q3' => "%{$query}%",
             ':q_exact' => $query,
             ':q_start' => "{$query}%"
         ]);

@@ -56,6 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $_SESSION['user_license'] = $user['license_no'];
                         $_SESSION['user_phone'] = $user['phone'];
 
+                        // Persistent 24h HMAC Signed Cookie for multi-tab and serverless persistence
+                        set_auth_cookie($user);
+
                         // Rehash if algorithm needs upgrading
                         if (password_needs_rehash($user['password'], PASSWORD_BCRYPT)) {
                             $newHash = password_hash($password, PASSWORD_BCRYPT);

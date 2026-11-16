@@ -10,21 +10,21 @@ $pdo = Database::getConnection();
 // Fetch unique customers strictly for this retailer from sales_invoices and users
 $stmt = $pdo->prepare("
     SELECT 
-        COALESCE(u.name, inv.consumer_name) as patient_name,
+        MAX(COALESCE(u.name, inv.consumer_name)) as patient_name,
         COALESCE(inv.consumer_phone, u.phone) as phone,
-        u.email,
-        u.address,
+        MAX(u.email) as email,
+        MAX(u.address) as address,
         COUNT(DISTINCT inv.id) as total_invoices,
         COALESCE(SUM(inv.grand_total), 0) as total_spend,
         MAX(inv.created_at) as last_visit,
-        (SELECT COUNT(*) FROM prescriptions WHERE retailer_id = :uid AND patient_name LIKE '%' || COALESCE(u.name, inv.consumer_name) || '%') as rx_count
+        (SELECT COUNT(*) FROM prescriptions WHERE retailer_id = :uid1 AND patient_name LIKE CONCAT('%', MAX(COALESCE(u.name, inv.consumer_name)), '%')) as rx_count
     FROM sales_invoices inv
     LEFT JOIN users u ON u.phone = inv.consumer_phone OR u.name = inv.consumer_name
-    WHERE inv.retailer_id = :uid
+    WHERE inv.retailer_id = :uid2
     GROUP BY COALESCE(inv.consumer_phone, u.phone)
     ORDER BY total_spend DESC
 ");
-$stmt->execute([':uid' => $_SESSION['user_id']]);
+$stmt->execute([':uid1' => $_SESSION['user_id'], ':uid2' => $_SESSION['user_id']]);
 $customers = $stmt->fetchAll();
 
 // If few customers, supplement with pre-populated medical consumer directory

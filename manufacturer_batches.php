@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             try {
                 $stmt = $pdo->prepare("
                     INSERT INTO batches (medicine_id, manufacturer_id, batch_number, mfg_date, expiry_date, initial_quantity, current_quantity, mrp_unit, distributor_price, is_recalled, is_expired)
-                    VALUES (:mid, :mfrid, :bno, :mfg, :exp, :qty, :qty, :mrp, :dist, 0, 0)
+                    VALUES (:mid, :mfrid, :bno, :mfg, :exp, :init_qty, :curr_qty, :mrp, :dist, 0, 0)
                 ");
                 $stmt->execute([
                     ':mid' => $medId,
@@ -33,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     ':bno' => $batchNo,
                     ':mfg' => $mfgDate,
                     ':exp' => $expDate,
-                    ':qty' => $units,
+                    ':init_qty' => $units,
+                    ':curr_qty' => $units,
                     ':mrp' => $mrp,
                     ':dist' => $distPrice
                 ]);

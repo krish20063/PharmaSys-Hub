@@ -13,7 +13,87 @@ function is_logged_in(): bool {
             @session_start();
         }
     }
-    return !empty($_SESSION['user_id']) && !empty($_SESSION['user_role']);
+    if (!empty($_SESSION['user_id']) && !empty($_SESSION['user_role'])) {
+        return true;
+    }
+    return restore_session_from_cookie();
+}
+
+function set_auth_cookie(array $user): void {
+    $lifetime = (int)env('SESSION_LIFETIME_SECONDS', 86400);
+    if ($lifetime <= 0) $lifetime = 86400;
+    $exp = time() + $lifetime;
+    $payload = json_encode([
+        'uid' => (int)$user['id'],
+        'role' => $user['role'],
+        'name' => $user['name'] ?? '',
+        'email' => $user['email'] ?? '',
+        'license' => $user['license_no'] ?? '',
+        'phone' => $user['phone'] ?? '',
+        'exp' => $exp
+    ]);
+    $secret = defined('APP_SECRET') ? APP_SECRET : 'pharmasys_secret_fallback_key_2026';
+    $sig = hash_hmac('sha256', $payload, $secret);
+    $token = base64_encode($payload) . '.' . $sig;
+
+    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+               (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
+    setcookie('pharmasys_token', $token, [
+        'expires' => $exp,
+        'path' => '/',
+        'domain' => '',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+function clear_auth_cookie(): void {
+    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+               (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
+    setcookie('pharmasys_token', '', [
+        'expires' => time() - 3600,
+        'path' => '/',
+        'domain' => '',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+function restore_session_from_cookie(): bool {
+    if (empty($_COOKIE['pharmasys_token'])) {
+        return false;
+    }
+    $parts = explode('.', $_COOKIE['pharmasys_token'], 2);
+    if (count($parts) !== 2) {
+        return false;
+    }
+    [$payloadBase64, $sig] = $parts;
+    $payload = base64_decode($payloadBase64, true);
+    if (!$payload) {
+        return false;
+    }
+    $secret = defined('APP_SECRET') ? APP_SECRET : 'pharmasys_secret_fallback_key_2026';
+    $expectedSig = hash_hmac('sha256', $payload, $secret);
+    if (!hash_equals($expectedSig, $sig)) {
+        return false;
+    }
+    $data = json_decode($payload, true);
+    if (!is_array($data) || empty($data['uid']) || empty($data['role']) || ($data['exp'] ?? 0) < time()) {
+        return false;
+    }
+    $_SESSION['user_id'] = (int)$data['uid'];
+    $_SESSION['user_role'] = $data['role'];
+    $_SESSION['user_name'] = $data['name'] ?? 'User';
+    $_SESSION['user_email'] = $data['email'] ?? '';
+    $_SESSION['user_license'] = $data['license'] ?? '';
+    $_SESSION['user_phone'] = $data['phone'] ?? '';
+    return true;
 }
 
 function current_user(): ?array {

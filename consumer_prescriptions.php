@@ -35,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         // Default file name placeholder
         $hasPhysicalFile = false;
         $fileName = 'Rx_' . $cleanPatient . '_' . $timeToken . '.svg';
+        $fileData = null;
+        $fileMime = 'image/svg+xml';
 
         // Handle physical uploaded file if provided
         if (isset($_FILES['rx_file']) && is_uploaded_file($_FILES['rx_file']['tmp_name'])) {
@@ -44,10 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             } else {
                 $origExt = $validation['extension'];
                 $fileName = 'Rx_' . $cleanPatient . '_' . $timeToken . '.' . $origExt;
+                $fileData = file_get_contents($_FILES['rx_file']['tmp_name']);
+                $fileMime = $validation['mime'] ?? 'image/jpeg';
                 $destPath = $uploadDir . '/' . $fileName;
-                if (move_uploaded_file($_FILES['rx_file']['tmp_name'], $destPath)) {
-                    $hasPhysicalFile = true;
-                }
+                @move_uploaded_file($_FILES['rx_file']['tmp_name'], $destPath);
+                $hasPhysicalFile = true;
             }
         }
 
@@ -62,14 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             'created_at' => date('Y-m-d H:i:s')
         ];
         $svgDoc = generatePrescriptionSvg($tempData);
-        file_put_contents($uploadDir . '/' . $fileName, $svgDoc);
+        $fileData = $svgDoc;
+        $fileMime = 'image/svg+xml';
+        @file_put_contents($uploadDir . '/' . $fileName, $svgDoc);
     }
 
     if ($patientName && $doctorName) {
         try {
             $stmt = $pdo->prepare("
-                INSERT INTO prescriptions (consumer_id, retailer_id, patient_name, doctor_name, file_name, prescribed_medicines, notes, status)
-                VALUES (:cid, :rid, :pname, :dname, :fname, :pmeds, :notes, 'pending')
+                INSERT INTO prescriptions (consumer_id, retailer_id, patient_name, doctor_name, file_name, file_data, file_mime, prescribed_medicines, notes, status)
+                VALUES (:cid, :rid, :pname, :dname, :fname, :fdata, :fmime, :pmeds, :notes, 'pending')
             ");
             $stmt->execute([
                 ':cid' => $_SESSION['user_id'],
@@ -77,6 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 ':pname' => $patientName,
                 ':dname' => $doctorName,
                 ':fname' => $fileName,
+                ':fdata' => $fileData,
+                ':fmime' => $fileMime,
                 ':pmeds' => $prescribedMeds ?: 'Augmentin 625 Duo, Pan-D 40',
                 ':notes' => $notes
             ]);

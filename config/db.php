@@ -43,7 +43,7 @@ class Database {
                 $options = [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
+                    PDO::ATTR_EMULATE_PREPARES => true,
                     PDO::ATTR_TIMEOUT => 5,
                     PDO::ATTR_PERSISTENT => true
                 ];
@@ -396,6 +396,8 @@ class Database {
                 patient_name TEXT NOT NULL,
                 doctor_name TEXT NOT NULL,
                 file_name TEXT NOT NULL,
+                file_data BLOB DEFAULT NULL,
+                file_mime TEXT DEFAULT NULL,
                 prescribed_medicines TEXT DEFAULT NULL,
                 notes TEXT DEFAULT NULL,
                 status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'verified', 'rejected')),
