@@ -50,3 +50,27 @@
 *   **[Digital WhatsApp E-Bills](consumer_bills.php):** Review digital tax invoices delivered to your WhatsApp mobile (+91 98765 43213).
 
 ---
+
+## 3. Database Architecture & 24/7 Live Persistence
+
+PharmaSys Hub features a **Dual-Engine Auto-Detecting Database Architecture**:
+
+1. **Zero-Config Persistent SQLite (`database/pharmasys_live.db`):**
+   - The repository comes pre-packaged with the full, live SQLite database file.
+   - Anyone who clones this repository has immediate access to all 10 relational tables, 160+ user accounts, 25+ formulations, batch registries, shelf mappings, and sales logs without needing to install MySQL or run seed commands.
+   - Includes automatic self-healing bootstrap if the database file is ever relocated.
+
+2. **24/7 Production Cloud Database (MySQL / Cloud RDS):**
+   - For public 24/7 live multi-user hosting (on Render, Railway, AWS, or VPS), you can connect any live cloud MySQL/MariaDB database (e.g. Aiven, Railway, Clever Cloud, AWS RDS).
+   - Import `database/schema.sql` into your cloud database.
+   - Configure your `.env` file with your live cloud credentials:
+     ```env
+     DB_TYPE=mysql
+     DB_HOST=your-live-cloud-host.com
+     DB_PORT=3306
+     DB_NAME=pharmasys_hub
+     DB_USER=your_username
+     DB_PASS=your_password
+     ```
+   - The application automatically switches to the live cloud database seamlessly.
+
