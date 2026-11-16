@@ -9,11 +9,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 $pendingRxCount = 0;
 if ($user && $user['role'] === 'retailer') {
-    try {
-        $pdoHead = Database::getConnection();
-        $cntStmt = $pdoHead->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'pending'");
-        $pendingRxCount = (int)$cntStmt->fetchColumn();
-    } catch (Exception $e) {}
+    if (isset($_SESSION['cached_rx_count']) && isset($_SESSION['cached_rx_time']) && (time() - (int)$_SESSION['cached_rx_time'] < 30)) {
+        $pendingRxCount = (int)$_SESSION['cached_rx_count'];
+    } else {
+        try {
+            $pdoHead = Database::getConnection();
+            $cntStmt = $pdoHead->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'pending'");
+            $pendingRxCount = (int)$cntStmt->fetchColumn();
+            $_SESSION['cached_rx_count'] = $pendingRxCount;
+            $_SESSION['cached_rx_time'] = time();
+        } catch (Exception $e) {}
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -31,7 +37,7 @@ if ($user && $user['role'] === 'retailer') {
     })();
   </script>
   <link rel="stylesheet" href="assets/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 </head>
 <body>
 

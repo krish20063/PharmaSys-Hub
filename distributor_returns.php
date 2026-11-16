@@ -226,7 +226,7 @@ require_once __DIR__ . '/includes/header.php';
             </tr>
           <?php else: ?>
             <?php foreach ($nearExpiryBatches as $b): ?>
-              <tr>
+              <tr class="<?= $b['is_past_expiry'] ? 'unsafe-row' : '' ?>">
                 <td><code style="font-family: var(--font-mono); font-size: 0.8rem;"><?= htmlspecialchars($b['batch_number']) ?></code></td>
                 <td><strong><?= htmlspecialchars($b['brand_name']) ?></strong></td>
                 <td><?= htmlspecialchars($b['salt_composition']) ?></td>

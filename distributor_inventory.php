@@ -77,8 +77,9 @@ require_once __DIR__ . '/includes/header.php';
             <?php
               $isCold = str_contains($item['warehouse_rack_location'], 'ColdChain');
               $isExpired = (int)$item['is_expired'] === 1 || strtotime($item['expiry_date']) < time();
+              $isRecalled = (int)$item['is_recalled'] === 1;
             ?>
-            <tr>
+            <tr class="<?= ($isExpired || $isRecalled) ? 'unsafe-row' : '' ?>">
               <td>
                 <strong><?= htmlspecialchars($item['brand_name']) ?></strong>
                 <div style="font-size: 0.725rem; color: var(--text-subtle);">

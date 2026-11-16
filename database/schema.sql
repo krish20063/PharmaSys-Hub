@@ -287,3 +287,21 @@ INSERT INTO `sales_invoices` (`invoice_number`, `retailer_id`, `consumer_name`, 
 INSERT INTO `notifications` (`target_role`, `title`, `message`, `type`) VALUES
 ('all', '🚨 Batch Recall Order: Calpol 500', 'Apex LifeSciences has blacklisted Batch BATCH-CL-BAD01 due to chemical impurity assay variation. POS lock active.', 'danger'),
 ('retailer', '⚠️ Low Stock Auto-Restock Triggered', 'Dolo 650 and Glycomet 500 breached minimum threshold. Draft Purchase Orders queued for review.', 'warning');
+
+-- =====================================================================
+-- Performance & Low-Latency Query Indexes
+-- =====================================================================
+CREATE INDEX idx_rx_ret_status ON prescriptions(retailer_id, status);
+CREATE INDEX idx_med_brand ON medicine_master(brand_name);
+CREATE INDEX idx_med_cat ON medicine_master(category);
+CREATE INDEX idx_med_salt ON medicine_master(salt_composition);
+CREATE INDEX idx_batches_expiry ON batches(expiry_date, is_expired);
+CREATE INDEX idx_batches_recalled ON batches(is_recalled);
+CREATE INDEX idx_batches_mfg ON batches(manufacturer_id);
+CREATE INDEX idx_inv_user_batch ON inventory(user_id, batch_id);
+CREATE INDEX idx_ret_claims_ret ON return_claims(retailer_id, status);
+CREATE INDEX idx_ret_claims_dist ON return_claims(distributor_id, status);
+CREATE INDEX idx_dpo_ret ON draft_purchase_orders(retailer_id, status);
+CREATE INDEX idx_chal_dist ON dispatch_challans(distributor_id, status);
+CREATE INDEX idx_chal_ret ON dispatch_challans(retailer_id, status);
+

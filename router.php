@@ -75,6 +75,7 @@ if ($ext && in_array($ext, $staticExtensions, true)) {
         ];
         header('Content-Type: ' . ($mimes[$ext] ?? 'application/octet-stream'));
         header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: public, max-age=31536000, immutable');
         if ($ext === 'svg') {
             header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'");
         }

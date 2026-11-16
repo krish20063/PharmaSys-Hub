@@ -124,7 +124,7 @@ require_once __DIR__ . '/includes/header.php';
                 $isExpired = (int)$b['is_expired'] === 1 || strtotime($b['expiry_date']) < $now;
                 $isRecalled = (int)$b['is_recalled'] === 1;
               ?>
-              <tr>
+              <tr class="<?= ($isExpired || $isRecalled) ? 'unsafe-row' : '' ?>">
                 <td><code style="font-family: var(--font-mono); font-size: 0.8rem;"><?= htmlspecialchars($b['batch_number']) ?></code></td>
                 <td>
                   <strong><?= htmlspecialchars($b['brand_name']) ?></strong>

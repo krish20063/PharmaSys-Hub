@@ -30,7 +30,8 @@ class Database {
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                     PDO::ATTR_EMULATE_PREPARES => false,
-                    PDO::ATTR_TIMEOUT => 5
+                    PDO::ATTR_TIMEOUT => 5,
+                    PDO::ATTR_PERSISTENT => true
                 ];
 
                 // Check CA certificate bundle for Cloud TLS/SSL (TiDB Cloud, Aiven, PlanetScale, AWS RDS)
@@ -54,21 +55,25 @@ class Database {
                 self::$driver = 'mysql';
                 self::$status = 'MySQL Live (Cloud)';
 
-                // Auto-bootstrap schema if connecting to a fresh cloud MySQL instance
-                try {
-                    $testTable = self::$pdo->query("SHOW TABLES LIKE 'users'")->fetch();
-                    if (!$testTable) {
-                        $sqlPath = __DIR__ . '/../database/schema.sql';
-                        if (file_exists($sqlPath)) {
-                            $rawSql = file_get_contents($sqlPath);
-                            $queries = array_filter(array_map('trim', explode(';', $rawSql)));
-                            foreach ($queries as $q) {
-                                if (empty($q) || stripos($q, 'DELIMITER') !== false) continue;
-                                try { self::$pdo->exec($q); } catch (Exception $e) {}
+                // Auto-bootstrap schema if connecting to an uninitialized database
+                // Optimized: Cached in session to eliminate redundant table inspection queries on every page load
+                if (session_status() === PHP_SESSION_ACTIVE && empty($_SESSION['db_bootstrapped'])) {
+                    try {
+                        $testTable = self::$pdo->query("SHOW TABLES LIKE 'users'")->fetch();
+                        if (!$testTable) {
+                            $sqlPath = __DIR__ . '/../database/schema.sql';
+                            if (file_exists($sqlPath)) {
+                                $rawSql = file_get_contents($sqlPath);
+                                $queries = array_filter(array_map('trim', explode(';', $rawSql)));
+                                foreach ($queries as $q) {
+                                    if (empty($q) || stripos($q, 'DELIMITER') !== false) continue;
+                                    try { self::$pdo->exec($q); } catch (Exception $e) {}
+                                }
                             }
                         }
-                    }
-                } catch (Exception $ignored) {}
+                        $_SESSION['db_bootstrapped'] = true;
+                    } catch (Exception $ignored) {}
+                }
 
                 self::runExpiryDaemon(self::$pdo);
                 return self::$pdo;
@@ -142,8 +147,15 @@ class Database {
     /**
      * Dynamic Calendar Expiry Daemon:
      * Evaluates current real-world date against batches and dynamically marks expired stock.
+     * Throttled to run at most once per hour (3600s) to avoid redundant write locks on every request.
      */
     public static function runExpiryDaemon(PDO $pdo): void {
+        if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['last_expiry_daemon_run'])) {
+            if (time() - $_SESSION['last_expiry_daemon_run'] < 3600) {
+                return;
+            }
+        }
+
         $today = date('Y-m-d');
         try {
             $stmt = $pdo->prepare("UPDATE batches SET is_expired = 1 WHERE expiry_date < :today AND is_expired = 0");
@@ -152,6 +164,10 @@ class Database {
             // Also ensure future batches are marked unexpired
             $stmtRev = $pdo->prepare("UPDATE batches SET is_expired = 0 WHERE expiry_date >= :today AND is_expired = 1");
             $stmtRev->execute([':today' => $today]);
+
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                $_SESSION['last_expiry_daemon_run'] = time();
+            }
         } catch (Exception $e) {
             // Silently continue if tables not yet ready
         }
@@ -531,6 +547,23 @@ class Database {
             INSERT INTO notifications (target_role, title, message, type) VALUES
             ('all', '🚨 Batch Recall Order: Calpol 500', 'Apex LifeSciences has blacklisted Batch BATCH-CL-BAD01 due to chemical impurity assay variation. POS lock active.', 'danger'),
             ('retailer', '⚠️ Low Stock Auto-Restock Triggered', 'Dolo 650 and Glycomet 500 breached minimum threshold. Draft Purchase Orders queued for review.', 'warning');
+        ");
+
+        // Performance & Low-Latency Query Indexes
+        $pdo->exec("
+            CREATE INDEX IF NOT EXISTS idx_rx_ret_status ON prescriptions(retailer_id, status);
+            CREATE INDEX IF NOT EXISTS idx_med_brand ON medicine_master(brand_name);
+            CREATE INDEX IF NOT EXISTS idx_med_cat ON medicine_master(category);
+            CREATE INDEX IF NOT EXISTS idx_med_salt ON medicine_master(salt_composition);
+            CREATE INDEX IF NOT EXISTS idx_batches_expiry ON batches(expiry_date, is_expired);
+            CREATE INDEX IF NOT EXISTS idx_batches_recalled ON batches(is_recalled);
+            CREATE INDEX IF NOT EXISTS idx_batches_mfg ON batches(manufacturer_id);
+            CREATE INDEX IF NOT EXISTS idx_inv_user_batch ON inventory(user_id, batch_id);
+            CREATE INDEX IF NOT EXISTS idx_ret_claims_ret ON return_claims(retailer_id, status);
+            CREATE INDEX IF NOT EXISTS idx_ret_claims_dist ON return_claims(distributor_id, status);
+            CREATE INDEX IF NOT EXISTS idx_dpo_ret ON draft_purchase_orders(retailer_id, status);
+            CREATE INDEX IF NOT EXISTS idx_chal_dist ON dispatch_challans(distributor_id, status);
+            CREATE INDEX IF NOT EXISTS idx_chal_ret ON dispatch_challans(retailer_id, status);
         ");
     }
 }
