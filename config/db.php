@@ -30,11 +30,31 @@ class Database {
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                     PDO::ATTR_EMULATE_PREPARES => false,
-                    PDO::ATTR_TIMEOUT => 2
+                    PDO::ATTR_TIMEOUT => 5
                 ];
+                if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+                    $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                }
                 self::$pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
                 self::$driver = 'mysql';
-                self::$status = 'MySQL Live (XAMPP)';
+                self::$status = 'MySQL Live';
+
+                // Auto-bootstrap schema if connecting to a fresh cloud MySQL instance
+                try {
+                    $testTable = self::$pdo->query("SHOW TABLES LIKE 'users'")->fetch();
+                    if (!$testTable) {
+                        $sqlPath = __DIR__ . '/../database/schema.sql';
+                        if (file_exists($sqlPath)) {
+                            $rawSql = file_get_contents($sqlPath);
+                            $queries = array_filter(array_map('trim', explode(';', $rawSql)));
+                            foreach ($queries as $q) {
+                                if (empty($q) || stripos($q, 'DELIMITER') !== false) continue;
+                                try { self::$pdo->exec($q); } catch (Exception $e) {}
+                            }
+                        }
+                    }
+                } catch (Exception $ignored) {}
+
                 self::runExpiryDaemon(self::$pdo);
                 return self::$pdo;
             } catch (Exception $e) {

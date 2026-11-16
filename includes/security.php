@@ -80,6 +80,16 @@ if (php_sapi_name() !== 'cli') {
 // ---------------------------------------------------------------------
 // 3. API CORS & Origin Protection
 // ---------------------------------------------------------------------
+function start_secure_session(): void {
+    if (session_status() === PHP_SESSION_NONE) {
+        $tempDir = sys_get_temp_dir();
+        if (is_dir($tempDir) && is_writable($tempDir)) {
+            @ini_set('session.save_path', $tempDir);
+        }
+        @session_start();
+    }
+}
+
 function handle_api_cors(): void {
     $allowedHosts = [
         '127.0.0.1:8000',
@@ -95,7 +105,15 @@ function handle_api_cors(): void {
         $port = isset($parsed['port']) ? ':' . $parsed['port'] : '';
         $hostWithPort = $host . $port;
 
-        if (in_array($hostWithPort, $allowedHosts, true) || in_array($host, $allowedHosts, true)) {
+        $currentHost = $_SERVER['HTTP_HOST'] ?? '';
+        $currentParsedHost = parse_url('http://' . $currentHost, PHP_URL_HOST);
+
+        if (
+            in_array($hostWithPort, $allowedHosts, true) ||
+            in_array($host, $allowedHosts, true) ||
+            ($currentParsedHost && $host === $currentParsedHost) ||
+            (str_ends_with($host, '.vercel.app'))
+        ) {
             header("Access-Control-Allow-Origin: " . htmlspecialchars($origin, ENT_QUOTES, 'UTF-8'));
             header("Access-Control-Allow-Credentials: true");
         }
@@ -115,9 +133,7 @@ function handle_api_cors(): void {
 // 4. Centralized CSRF Protection
 // ---------------------------------------------------------------------
 function csrf_token(): string {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+    start_secure_session();
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
@@ -129,9 +145,7 @@ function csrf_field(): string {
 }
 
 function verify_csrf_token(?string $token = null): bool {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+    start_secure_session();
 
     if ($token === null) {
         $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
@@ -197,9 +211,7 @@ function check_rate_limit(string $actionKey, int $maxAttempts = 5, int $decaySec
     $bucketKey = 'rate_' . md5($actionKey . '_' . $ip);
     $now = time();
 
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+    start_secure_session();
 
     if (!isset($_SESSION[$bucketKey])) {
         $_SESSION[$bucketKey] = [

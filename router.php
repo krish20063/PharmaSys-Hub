@@ -4,7 +4,14 @@
  * Blocks exposed sensitive files, prevents direct database downloads, and enforces security headers.
  */
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$rawUri = $_SERVER['REQUEST_URI'] ?? '/';
+$uri = parse_url($rawUri, PHP_URL_PATH) ?: '/';
+
+// If routing through the serverless entrypoint or root, default to index.php
+if ($uri === '/api/index.php' || $uri === '/api/' || $uri === '/api' || $uri === '/router.php') {
+    $uri = '/';
+}
+
 $file = __DIR__ . $uri;
 
 // 1. Strict Blocklist: Forbidden Extensions & Sensitive Files

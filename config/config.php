@@ -69,14 +69,44 @@ define('APP_DEBUG', env('APP_DEBUG', false));
 define('APP_SECRET', env('APP_SECRET', 'pharmasys_secret_fallback_key_2026'));
 define('APP_URL', env('APP_URL', 'http://localhost:8000'));
 
-// Database Credentials
-define('DB_TYPE', env('DB_TYPE', 'auto')); // 'auto' tries MySQL first; falls back to live SQLite
-define('DB_HOST', env('DB_HOST', '127.0.0.1'));
-define('DB_PORT', env('DB_PORT', '3306'));
-define('DB_NAME', env('DB_NAME', 'pharmasys_hub'));
-define('DB_USER', env('DB_USER', 'root'));
-define('DB_PASS', env('DB_PASS', ''));
-define('DB_SQLITE_PATH', __DIR__ . '/../database/pharmasys_live.db');
+// Database Credentials & Cloud URL Support
+$dbUrl = env('DATABASE_URL') ?: env('MYSQL_URL') ?: getenv('DATABASE_URL') ?: getenv('MYSQL_URL');
+if ($dbUrl) {
+    $parsedUrl = parse_url($dbUrl);
+    $cfgDbType = 'mysql';
+    $cfgDbHost = $parsedUrl['host'] ?? '127.0.0.1';
+    $cfgDbPort = (string)($parsedUrl['port'] ?? '3306');
+    $cfgDbUser = $parsedUrl['user'] ?? 'root';
+    $cfgDbPass = $parsedUrl['pass'] ?? '';
+    $cfgDbName = ltrim($parsedUrl['path'] ?? 'pharmasys_hub', '/');
+} else {
+    $cfgDbType = env('DB_TYPE', 'auto');
+    $cfgDbHost = env('DB_HOST', '127.0.0.1');
+    $cfgDbPort = (string)env('DB_PORT', '3306');
+    $cfgDbUser = env('DB_USER', 'root');
+    $cfgDbPass = env('DB_PASS', '');
+    $cfgDbName = env('DB_NAME', 'pharmasys_hub');
+}
+
+define('DB_TYPE', $cfgDbType); // 'mysql', 'sqlite', or 'auto' (tries MySQL first; falls back to live SQLite)
+define('DB_HOST', $cfgDbHost);
+define('DB_PORT', $cfgDbPort);
+define('DB_NAME', $cfgDbName);
+define('DB_USER', $cfgDbUser);
+define('DB_PASS', $cfgDbPass);
+
+// Serverless / Vercel SQLite persistence path handling
+$isServerless = isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL') || defined('VERCEL_ENVIRONMENT');
+$defaultSqlite = __DIR__ . '/../database/pharmasys_live.db';
+if ($isServerless) {
+    $tmpSqlite = sys_get_temp_dir() . '/pharmasys_live.db';
+    if (!file_exists($tmpSqlite) && file_exists($defaultSqlite)) {
+        @copy($defaultSqlite, $tmpSqlite);
+    }
+    define('DB_SQLITE_PATH', env('DB_SQLITE_PATH', $tmpSqlite));
+} else {
+    define('DB_SQLITE_PATH', env('DB_SQLITE_PATH', $defaultSqlite));
+}
 
 // Meta WhatsApp Cloud API Credentials
 define('WHATSAPP_API_TOKEN', env('WHATSAPP_API_TOKEN', 'EAAG_MOCK_META_TOKEN_PHARMASYS_DEMO'));

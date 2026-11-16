@@ -6,6 +6,13 @@
 require_once __DIR__ . '/../config/config.php';
 
 function is_logged_in(): bool {
+    if (session_status() === PHP_SESSION_NONE) {
+        if (function_exists('start_secure_session')) {
+            start_secure_session();
+        } else {
+            @session_start();
+        }
+    }
     return !empty($_SESSION['user_id']) && !empty($_SESSION['user_role']);
 }
 
