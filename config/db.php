@@ -23,7 +23,21 @@ class Database {
         }
 
         // Try MySQL first if configured
-        if (DB_TYPE === 'mysql' || DB_TYPE === 'auto') {
+        $attemptMysql = (DB_TYPE === 'mysql');
+        if (DB_TYPE === 'auto') {
+            if (DB_HOST !== '127.0.0.1' && DB_HOST !== 'localhost') {
+                $attemptMysql = true;
+            } else {
+                // Quick-probe port to prevent 5000ms blocking timeouts when local MySQL is not running
+                $probe = @fsockopen(DB_HOST, (int)DB_PORT, $errno, $errstr, 0.2);
+                if ($probe) {
+                    $attemptMysql = true;
+                    fclose($probe);
+                }
+            }
+        }
+
+        if ($attemptMysql) {
             try {
                 $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', DB_HOST, DB_PORT, DB_NAME);
                 $options = [
