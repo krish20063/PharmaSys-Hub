@@ -3,13 +3,13 @@
 .env.local
 .env.*.local
 
-# Databases & Backups
-database/*.db
+# Databases & Backups (Track pre-seeded database for zero-config live clone)
 database/*.sqlite
 database/*.sqlite3
 *.db-journal
 *.db-wal
 *.db-shm
+!database/pharmasys_live.db
 
 # Server Logs & Errors
 logs/*.log
