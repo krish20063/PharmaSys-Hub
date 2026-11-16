@@ -60,7 +60,7 @@
 | **Distributor** | `distributor@pharmasys.com` | `password123` | `distributor.php` |
 | **Consumer** | `consumer@pharmasys.com` | `password123` | `consumer.php` |
 
-*(Quick 1-click "Auto-Fill" demo chips are available directly on the login screen for testing).*
+*(Authentication is secured; accounts are managed via standard login credentials).*
 
 ---
 
