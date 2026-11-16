@@ -50,21 +50,3 @@
 *   **[Digital WhatsApp E-Bills](consumer_bills.php):** Review digital tax invoices delivered to your WhatsApp mobile (+91 98765 43213).
 
 ---
-
-## 3. Demo Credentials
-
-| Role | Registered Email | Password | Default Home Portal |
-|---|---|---|---|
-| **Retailer** | `retailer@pharmasys.com` | `password123` | `retailer_pos.php` |
-| **Manufacturer** | `manufacturer@pharmasys.com` | `password123` | `manufacturer.php` |
-| **Distributor** | `distributor@pharmasys.com` | `password123` | `distributor.php` |
-| **Consumer** | `consumer@pharmasys.com` | `password123` | `consumer.php` |
-
-*(Authentication is secured; accounts are managed via standard login credentials).*
-
----
-
-## 4. Local Execution
-
-*   **Local Server Address:** [http://127.0.0.1:8000/login.php](http://127.0.0.1:8000/login.php)
-*   **Database Management:** Locked to authorized CLI administration only. All tables, medicines, and accounts are pre-seeded and secured.
