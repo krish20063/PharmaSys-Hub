@@ -87,9 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     $insInv->execute([':uid' => $distributorId, ':bid' => $batchId, ':qty' => $quantity, ':rack' => $destRack]);
                 }
 
-                // 3. Deduct allocated units from factory batch
-                $updBatch = $pdo->prepare("UPDATE batches SET current_quantity = MAX(0, current_quantity - :qty) WHERE id = :bid");
-                $updBatch->execute([':qty' => $quantity, ':bid' => $batchId]);
+                // 3. Deduct allocated units from factory batch (portable ANSI SQL compatible with TiDB, MySQL, and SQLite)
+                $updBatch = $pdo->prepare("UPDATE batches SET current_quantity = CASE WHEN current_quantity >= :qty1 THEN current_quantity - :qty2 ELSE 0 END WHERE id = :bid");
+                $updBatch->execute([':qty1' => $quantity, ':qty2' => $quantity, ':bid' => $batchId]);
 
                 // 4. Send notification to Manufacturer
                 $notifStmt = $pdo->prepare("INSERT INTO notifications (target_role, title, message, type) VALUES ('manufacturer', '📦 New Bulk Procurement PO', :msg, 'info')");
