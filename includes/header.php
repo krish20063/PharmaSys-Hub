@@ -54,10 +54,10 @@ if ($user && $user['role'] === 'retailer') {
 
       <!-- Right Header Elements -->
       <div class="header-right-actions">
-        <!-- Live Database Badge -->
-        <span class="badge badge-success db-badge-header" title="Real-time SQL database active: <?= htmlspecialchars($dbStatus) ?>">
+        <!-- Live Database Badge & Explorer Link -->
+        <a href="db_explorer.php" class="badge badge-success db-badge-header" style="text-decoration: none;" title="Click to open Live Database Explorer & Telemetry">
           <?= icon('database', 13) ?> <span class="db-badge-text"><?= htmlspecialchars($dbStatus) ?></span>
-        </span>
+        </a>
 
         <!-- Theme Mode Switcher -->
         <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark / Light Theme" aria-label="Toggle Theme">
