@@ -89,6 +89,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <form method="POST" action="distributor_challans.php">
+      <?= csrf_field() ?>
       <input type="hidden" name="action" value="create_challan">
 
       <div class="grid-4">

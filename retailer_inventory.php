@@ -169,6 +169,7 @@ require_once __DIR__ . '/includes/header.php';
                   <?= icon('sliders', 12) ?> Adjust
                 </button>
                 <form method="POST" action="retailer_inventory.php" style="display: inline-flex; gap: 0.35rem; margin-left: 0.35rem;">
+                  <?= csrf_field() ?>
                   <input type="hidden" name="action" value="update_rack">
                   <input type="hidden" name="inventory_id" value="<?= $item['id'] ?>">
                   <input type="text" name="rack_location" class="form-control" style="width: 105px; padding: 0.25rem 0.5rem; font-size: 0.75rem;" value="<?= htmlspecialchars($item['warehouse_rack_location']) ?>" title="Shelf Rack ID">

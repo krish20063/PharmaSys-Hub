@@ -147,6 +147,7 @@ require_once __DIR__ . '/includes/header.php';
       <?php if ($user['role'] === 'retailer'): ?>
         <?php if ($rx['status'] === 'pending'): ?>
           <form method="POST" action="retailer_prescriptions.php" style="display: inline;">
+            <?= csrf_field() ?>
             <input type="hidden" name="action" value="verify_rx">
             <input type="hidden" name="rx_id" value="<?= $rx['id'] ?>">
             <button type="submit" class="btn btn-success btn-sm">

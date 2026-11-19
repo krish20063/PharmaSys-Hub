@@ -134,10 +134,42 @@ function handle_api_cors(): void {
 // ---------------------------------------------------------------------
 function csrf_token(): string {
     start_secure_session();
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    $userId = $_SESSION['user_id'] ?? 0;
+    $secret = defined('APP_SECRET') ? APP_SECRET : 'pharmasys_secret_fallback_key_2026';
+
+    // If an existing token in session is cryptographically valid for this user, reuse it
+    if (!empty($_SESSION['csrf_token']) && is_string($_SESSION['csrf_token'])) {
+        $parts = explode('.', $_SESSION['csrf_token'], 2);
+        if (count($parts) === 2) {
+            $expectedSig = hash_hmac('sha256', $parts[0] . ':' . $userId, $secret);
+            if (hash_equals($expectedSig, $parts[1])) {
+                return $_SESSION['csrf_token'];
+            }
+        }
     }
-    return $_SESSION['csrf_token'];
+
+    $nonce = bin2hex(random_bytes(16));
+    $sig = hash_hmac('sha256', $nonce . ':' . $userId, $secret);
+    $token = $nonce . '.' . $sig;
+    $_SESSION['csrf_token'] = $token;
+
+    // Set cookie for double-submit redundancy across serverless lambdas
+    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+               (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
+    if (!headers_sent()) {
+        setcookie('pharmasys_csrf', $token, [
+            'expires' => time() + 86400,
+            'path' => '/',
+            'domain' => '',
+            'secure' => $isHttps,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+    }
+
+    return $token;
 }
 
 function csrf_field(): string {
@@ -155,12 +187,34 @@ function verify_csrf_token(?string $token = null): bool {
         }
     }
 
-    $sessionToken = $_SESSION['csrf_token'] ?? '';
-    if (empty($token) || empty($sessionToken)) {
+    if (empty($token) || !is_string($token)) {
         return false;
     }
 
-    return hash_equals($sessionToken, $token);
+    $secret = defined('APP_SECRET') ? APP_SECRET : 'pharmasys_secret_fallback_key_2026';
+    $userId = $_SESSION['user_id'] ?? 0;
+
+    // Check 1: Cryptographic HMAC token verification (Serverless-proof)
+    $parts = explode('.', $token, 2);
+    if (count($parts) === 2) {
+        $expectedSigWithUser = hash_hmac('sha256', $parts[0] . ':' . $userId, $secret);
+        $expectedSigNoUser = hash_hmac('sha256', $parts[0] . ':0', $secret);
+        if (hash_equals($expectedSigWithUser, $parts[1]) || hash_equals($expectedSigNoUser, $parts[1])) {
+            return true;
+        }
+    }
+
+    // Check 2: Match against session token
+    if (!empty($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
+        return true;
+    }
+
+    // Check 3: Match against Double-Submit Cookie
+    if (!empty($_COOKIE['pharmasys_csrf']) && hash_equals($_COOKIE['pharmasys_csrf'], $token)) {
+        return true;
+    }
+
+    return false;
 }
 
 function require_csrf(): void {
